@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <h1>
+        sanne制作🫡
+    </h1>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>deadline</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-image: url('https://pic.nximg.cn/file/20230506/18806722_111848768100_2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        #yys {
+            display: none; /* 隐藏音频元素，仅作为背景音乐 */
+        }
+    </style>
+</head>
+<body>
+    <audio id="yys" src="yys.mp3" autoplay></audio>
+
+    <script>
+        // 处理浏览器自动播放限制
+        window.addEventListener('load', function() {
+            const audio = document.getElementById('yys');
+            const playPromise = audio.play();
+            
+            // 处理可能的自动播放被阻止情况
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // 自动播放成功
+                }).catch(error => {
+                    console.warn("自动播放被浏览器阻止:", error);
+                    // 提供一个用户点击后播放的备选方案
+                    document.body.addEventListener('click', () => {
+                        audio.play();
+                    }, { once: true });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
