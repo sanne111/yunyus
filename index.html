@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>secret media秘密媒体</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            padding: 25px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+        }
+        .site-title {
+            font-size: 2.8em;
+            margin: 0;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .search-result {
+            font-size: 1.3em;
+            color: #bb86fc;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+        .video-container {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .video-item {
+            width: 320px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .video-item:hover {
+            transform: translateY(-5px);
+        }
+        .video-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+            transition: filter 0.2s;
+        }
+        .video-item img:hover {
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="site-title">secret media秘密媒体</h1>
+        <div class="search-result">搜索到3个结果</div>
+    </div>
+    
+    <div class="video-container">
+        <div class="video-item">
+            <a href="258.mp4">
+                <img src="blood1.png" alt="Blood Video 1">
+            </a>
+            <h4 align="center">监狱中发生的血案</h4>
+        </div>
+        <div class="video-item">
+            <a href="taffy.mp4">
+                <img src="blood2.jpg" alt="Taffy Video 2">
+            </a>
+            <h4 align="center">非洲食人纪实</h4>
+        </div>
+        <div class="video-item">
+            <a href="bone.mp4">
+                <img src="blood3.webp" alt="Bone Video 3">
+            </a>
+            <h4 align="center">墨西哥火龙果事件</h4>
+        </div>
+    </div>
+</body>
+</html>
