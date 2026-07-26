@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频详情 - secret media秘密媒体</title>
+    <style>
+        body {
+            background-color: #121212;
+            background-image: url('bg.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            z-index: -1;
+            opacity: 0.05;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            color: #bb86fc;
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            color: #ffffff;
+        }
+
+        .back-button svg {
+            margin-right: 8px;
+        }
+
+        .video-detail {
+            background: rgba(30, 30, 45, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-player {
+            width: 100%;
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .video-player video {
+            width: 100%;
+            display: block;
+        }
+
+        .video-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        .video-error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff4444;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 80%;
+        }
+
+        .video-error button {
+            background: #bb86fc;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .video-error button:hover {
+            background: #9a68d9;
+        }
+
+        .video-info {
+            padding: 25px;
+        }
+
+        .video-title {
+            font-size: 2.2em;
+            margin: 0 0 15px;
+            color: #ffffff;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .video-description {
+            font-size: 1.1em;
+            line-height: 1.7;
+            color: #e0e0e0;
+            margin-bottom: 25px;
+        }
+
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #bb86fc;
+            font-size: 0.95em;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l4.147 4.146a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+            </svg>
+            返回主页
+        </a>
+        
+        <div class="video-detail">
+            <div class="video-player">
+                <video id="videoPlayer" controls>
+                    <!-- 视频源将在JS中动态添加 -->
+                </video>
+                <div id="videoLoading" class="video-loading">视频加载中...</div>
+            </div>
+            <div class="video-info">
+                <h1 class="video-title" id="videoTitle">视频标题</h1>
+                <div class="video-description" id="videoDescription">
+                    视频详细描述内容...
+                </div>
+                <div class="video-meta">
+                    <span>浏览量: <span id="views">0</span></span>
+                    <span>上传日期: <span id="uploadDate">2023-08-15</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 视频元数据数据库
+        const videoDatabase = {
+            '258': {
+                title: '监狱中发生的血案',
+                description: '2023年发生在某监狱的真实血案记录，揭示了监狱内部的暴力问题。该事件引发了全国对监狱管理制度的重新审视。',
+                src: '258.mp4',
+                type: 'video/mp4',
+                views: '2.4万',
+                date: '2023-06-12'
+            },
+            'taffy': {
+                title: '非洲食人纪实',
+                description: '深入非洲偏远地区的纪录片，记录了当地部落的传统习俗和文化。本片经过严格审核，内容真实但可能引起不适，请谨慎观看。',
+                src: 'taffy.mp4',
+                type: 'video/mp4',
+                views: '5.7万',
+                date: '2023-07-22'
+            },
+            'bone': {
+                title: '墨西哥火龙果事件',
+                description: '2022年墨西哥边境发生的一起特殊事件，涉及火龙果运输过程中的意外发现。该事件后来被证实与跨国走私活动有关。',
+                src: 'bone.mp4',
+                type: 'video/mp4',
+                views: '3.1万',
+                date: '2023-05-08'
+            },
+            'nail': {
+                title: '创造尸块',
+                description: '本视频展示了现代法医学中的特殊案例，记录了相关调查过程。该视频内容可能引起不适，请谨慎观看。',
+                src: 'nail.mp4',
+                type: 'video/mp4',
+                views: '1.9万',
+                date: '2023-08-03'
+            }
+        };
+
+        // 从URL获取视频ID
+        function getVideoId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id') || '258'; // 默认视频
+        }
+
+        // 显示/隐藏加载指示器
+        function toggleLoading(show) {
+            const loadingElement = document.getElementById('videoLoading');
+            if (loadingElement) {
+                loadingElement.style.display = show ? 'block' : 'none';
+            }
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            const playerContainer = document.querySelector('.video-player');
+            
+            // 移除可能已存在的错误消息
+            const existingError = document.getElementById('videoError');
+            if (existingError) {
+                existingError.remove();
+            }
+            
+            // 创建错误消息
+            const errorDiv = document.createElement('div');
+            errorDiv.id = 'videoError';
+            errorDiv.className = 'video-error';
+            errorDiv.innerHTML = `
+                <p>${message}</p>
+                <button onclick="retryVideo()">重试</button>
+            `;
+            
+            playerContainer.appendChild(errorDiv);
+        }
+
+        // 重试视频加载
+        function retryVideo() {
+            const errorElement = document.getElementById('videoError');
+            if (errorElement) {
+                errorElement.remove();
+            }
+            loadVideoDetails();
+        }
+
+        // 加载视频详情
+        function loadVideoDetails() {
+            const videoId = getVideoId();
+            const videoData = videoDatabase[videoId] || videoDatabase['258'];
+            
+            // 更新页面内容
+            document.getElementById('videoTitle').textContent = videoData.title;
+            document.getElementById('videoDescription').textContent = videoData.description;
+            document.getElementById('views').textContent = videoData.views;
+            document.getElementById('uploadDate').textContent = videoData.date;
+            
+            // 设置视频源
+            const videoPlayer = document.getElementById('videoPlayer');
+            const source = document.createElement('source');
+            source.src = videoData.src;
+            source.type = videoData.type;
+            
+            // 清除之前的源
+            while (videoPlayer.firstChild) {
+                videoPlayer.removeChild(videoPlayer.firstChild);
+            }
+            
+            // 添加新源
+            videoPlayer.appendChild(source);
+            
+            // 显示加载状态
+            toggleLoading(true);
+            
+            // 添加事件监听
+            videoPlayer.addEventListener('canplay', function() {
+                toggleLoading(false);
+            });
+            
+            videoPlayer.addEventListener('error', function(e) {
+                toggleLoading(false);
+                showError('视频加载失败，请检查文件路径或格式是否正确。<br>错误代码: ' + (e.target.error ? e.target.error.code : '未知'));
+            });
+            
+            // 尝试加载视频
+            videoPlayer.load();
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', loadVideoDetails);
+    </script>
+</body>
+</html>
