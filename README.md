@@ -1,2 +1,2 @@
-# haha
-trick your friends
+# HI
+新手练习项目;D
